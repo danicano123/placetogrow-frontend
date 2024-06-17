@@ -1,4 +1,5 @@
 import Dashboard from "../components/Dashboard/Dashboard";
+import RegisterForm from "../components/Register/RegisterForm";
 // import Layout from "../views/Layout/Layout";
 import Login from "../views/Login";
 import MicrositesIndex from "../views/Microsites/MicrositesIndex";
@@ -12,6 +13,10 @@ export const RoutesSchema = [
   {
     path: "/login",
     element: Login,
+  },
+  {
+    path: "/register",
+    element: RegisterForm,
   },
   {
     path: "/dashboard",
