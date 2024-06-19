@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
+import { Api } from "../../services/Api";
 
 interface RegisterFormValues {
   name: string;
   email: string;
   password: string;
-  confirmPassword: string;
+  password_confirmation: string;
 }
 
 const RegisterForm = () => {
@@ -14,23 +15,29 @@ const RegisterForm = () => {
     name: "",
     email: "",
     password: "",
-    confirmPassword: "",
+    password_confirmation: "",
   };
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("Campo requerido"),
-    email: Yup.string().email("Correo electrónico no válido").required("Campo requerido"),
-    password: Yup.string().required("Campo requerido"),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password')], "Las contraseñas deben coincidir")
+    email: Yup.string()
+      .email("Correo electrónico no válido")
+      .required("Campo requerido"),
+    password: Yup.string()
+      .min(8, "Mínimo 8 caracteres")
+      .required("Campo requerido"),
+    password_confirmation: Yup.string()
+      .oneOf([Yup.ref("password")], "Las contraseñas deben coincidir")
       .required("Campo requerido"),
   });
 
   const handleSubmit = (
     values: RegisterFormValues,
     actions: FormikHelpers<RegisterFormValues>
-  ) => {
-    // Lógica de manejo de envío aquí
+  ) => {    
+    Api.post("/register", values).then((response) => {
+      console.log(response);
+    });
     actions.setSubmitting(false);
   };
 
@@ -63,7 +70,11 @@ const RegisterForm = () => {
                 name="name"
                 placeholder="Nombre"
               />
-              <ErrorMessage name="name" component="div" className="text-red-500" />
+              <ErrorMessage
+                name="name"
+                component="div"
+                className="text-red-500"
+              />
             </div>
             <div className="mb-4">
               <label
@@ -79,7 +90,11 @@ const RegisterForm = () => {
                 name="email"
                 placeholder="Correo"
               />
-              <ErrorMessage name="email" component="div" className="text-red-500" />
+              <ErrorMessage
+                name="email"
+                component="div"
+                className="text-red-500"
+              />
             </div>
             <div className="mb-4">
               <label
@@ -95,23 +110,31 @@ const RegisterForm = () => {
                 name="password"
                 placeholder="Contraseña"
               />
-              <ErrorMessage name="password" component="div" className="text-red-500" />
+              <ErrorMessage
+                name="password"
+                component="div"
+                className="text-red-500"
+              />
             </div>
             <div className="mb-4">
               <label
                 className="block text-wood-darker text-sm font-bold mb-2"
-                htmlFor="confirmPassword"
+                htmlFor="password_confirmation"
               >
                 Confirmar Contraseña
               </label>
               <Field
                 className="shadow appearance-none border rounded-full w-full py-2 px-3 text-wood-darker leading-tight focus:outline-none focus:shadow-outline"
-                id="confirmPassword"
+                id="password_confirmation"
                 type="password"
-                name="confirmPassword"
+                name="password_confirmation"
                 placeholder="Confirmar Contraseña"
               />
-              <ErrorMessage name="confirmPassword" component="div" className="text-red-500" />
+              <ErrorMessage
+                name="password_confirmation"
+                component="div"
+                className="text-red-500"
+              />
             </div>
             <div className="flex items-center justify-between mb-4">
               <button

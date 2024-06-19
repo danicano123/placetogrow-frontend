@@ -2,6 +2,7 @@
 import { Link } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
+import { Api } from "../../services/Api";
 
 interface LoginFormValues {
   email: string;
@@ -15,16 +16,19 @@ const LoginForm = () => {
   };
 
   const validationSchema = Yup.object().shape({
-    email: Yup.string().email("Correo electrónico no válido").required("Campo requerido"),
+    email: Yup.string()
+      .email("Correo electrónico no válido")
+      .required("Campo requerido"),
     password: Yup.string().required("Campo requerido"),
   });
 
   const handleSubmit = (
     values: LoginFormValues,
     actions: FormikHelpers<LoginFormValues>
-  ) => {
-    // Lógica de manejo de envío aquí
-    console.log(values);
+  ) => {    
+    Api.post("/login", values).then((response) => {
+      console.log(response);
+    });
     actions.setSubmitting(false);
   };
 
@@ -57,7 +61,11 @@ const LoginForm = () => {
                 name="email"
                 placeholder="Correo"
               />
-              <ErrorMessage name="email" component="div" className="text-red-500" />
+              <ErrorMessage
+                name="email"
+                component="div"
+                className="text-red-500"
+              />
             </div>
             <div className="mb-4">
               <label
@@ -73,7 +81,11 @@ const LoginForm = () => {
                 name="password"
                 placeholder="Contraseña"
               />
-              <ErrorMessage name="password" component="div" className="text-red-500" />
+              <ErrorMessage
+                name="password"
+                component="div"
+                className="text-red-500"
+              />
             </div>
             <div className="flex items-center justify-between mb-4">
               <button
