@@ -2,6 +2,9 @@ import { Link } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { Api } from "../../services/Api";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { fetchAuth } from "../../store/slices/authSlice";
 
 interface LoginFormValues {
   email: string;
@@ -9,6 +12,10 @@ interface LoginFormValues {
 }
 
 const LoginForm = () => {
+  const auth = useSelector((state: any) => state.auth);
+  const dispatch = useDispatch();
+
+  useEffect(() => {}, [dispatch]);
   const initialValues: LoginFormValues = {
     email: "",
     password: "",
@@ -24,9 +31,12 @@ const LoginForm = () => {
   const handleSubmit = (
     values: LoginFormValues,
     actions: FormikHelpers<LoginFormValues>
-  ) => {    
+  ) => {
     Api.post("/login", values).then((response) => {
-      console.log(response);
+      
+      dispatch(fetchAuth(response))
+      console.log(auth.data.user);
+      
     });
     actions.setSubmitting(false);
   };

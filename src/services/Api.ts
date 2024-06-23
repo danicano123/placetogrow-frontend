@@ -5,7 +5,7 @@ interface ApiResponse<T> {
 
 export class Api{
 
-    static baseUrl = 'http://127.0.0.1:8000/api/v1';
+    static baseUrl = 'http://localhost:8000/api/v1';
 
     static async post<T>(url: string, data: T): Promise<ApiResponse<T>>{
         const response = await fetch(`${Api.baseUrl}${url}`, {
