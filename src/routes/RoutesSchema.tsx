@@ -1,8 +1,8 @@
 import Dashboard from "../components/Dashboard/Dashboard";
 import RegisterForm from "../components/Register/RegisterForm";
-// import Layout from "../views/Layout/Layout";
 import Login from "../views/Login";
 import MicrositesIndex from "../views/Microsites/MicrositesIndex";
+import UsersDashboard from "../views/Users/UsersDashboard";
 import Welcome from "../views/Welcome";
 
 export const RoutesSchema = [
@@ -21,11 +21,14 @@ export const RoutesSchema = [
   {
     path: "/dashboard",
     element: Dashboard,
+    isProtected: true,
     children: [
       {
-        path: "",
-        element: MicrositesIndex
-      }
+        path: "users",
+        element: UsersDashboard,
+        isProtected: true,
+      },
+      
     ]
   },
   {
