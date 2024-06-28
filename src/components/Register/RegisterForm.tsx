@@ -48,7 +48,7 @@ const RegisterForm = () => {
     actions: FormikHelpers<RegisterFormValues>
   ) => {
     Api.post("/register", values).then((response) => {
-      if (response.statusCode === 200) {
+      if (response.statusCode === 200 || response.statusCode === 201) {
         dispatch(fetchAuth({ ...response, isLogged: true }));
 
         //navigate("/register");
