@@ -6,9 +6,10 @@ import { persistor } from "../../store";
 interface HeaderProps {
   isLogged: boolean;
   userName: string;
+  role: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ isLogged, userName }) => {
+const Header: React.FC<HeaderProps> = ({ isLogged, userName, role }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
@@ -24,7 +25,7 @@ const Header: React.FC<HeaderProps> = ({ isLogged, userName }) => {
           <Link to="/" className="text-gold font-bold text-xl">
             Inicio
           </Link>
-          {isLogged && (
+          {isLogged && (role == 'admin') && (
             <>
               <Link to="/dashboard/users" className="text-wood-darker font-bold">
                 Usuarios

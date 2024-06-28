@@ -7,11 +7,14 @@ type props = {
 };
 
 const ProtectedRoutes = ({ children }: props) => {
-  const { isLogged } = useSelector((state: any) => state.auth);
+  const { isLogged, role } = useSelector((state: any) => state.auth);
   const navigate = useNavigate();
   useEffect(() => {
     if (!isLogged) {         
       navigate("/login");
+    }
+    if (role != 'admin') {         
+      navigate("/");
     }
   }, [isLogged]);
 
