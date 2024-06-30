@@ -1,7 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { Api } from "../../services/Api";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import Swal from "sweetalert2";
+import { fetchAuth } from "../../store/slices/authSlice";
 
 interface RegisterFormValues {
   name: string;
@@ -17,6 +21,14 @@ const RegisterForm = () => {
     password: "",
     password_confirmation: "",
   };
+  const navigate = useNavigate();
+  const auth = useSelector((state: any) => state.auth);
+  const dispatch = useDispatch();
+
+  useEffect(() => {}, [dispatch]);
+  useEffect(() => {
+    auth.isLogged ? navigate("/dashboard") : "";
+  }, [auth.isLogged]);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("Campo requerido"),
@@ -34,9 +46,19 @@ const RegisterForm = () => {
   const handleSubmit = (
     values: RegisterFormValues,
     actions: FormikHelpers<RegisterFormValues>
-  ) => {    
+  ) => {
     Api.post("/register", values).then((response) => {
-      console.log(response);
+      if (response.statusCode === 200 || response.statusCode === 201) {
+        dispatch(fetchAuth({ ...response, isLogged: true }));
+
+        //navigate("/register");
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: `${response.data.message}`,
+          icon: "error",
+        });
+      }
     });
     actions.setSubmitting(false);
   };
