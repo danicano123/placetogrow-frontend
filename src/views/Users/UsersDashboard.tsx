@@ -44,14 +44,16 @@ const UsersDashboard: React.FC = () => {
       <table className="min-w-full bg-white border border-gray-200">
         <thead>
           <tr>
-            <th className="py-2 px-4 border-b text-center w-1/2">Nombre</th>
-            <th className="py-2 px-4 border-b text-center w-1/2">Acciones</th>
+            <th className="py-2 px-4 border-b text-center">Nombre</th>
+            <th className="py-2 px-4 border-b text-center">Correo Electrónico</th>
+            <th className="py-2 px-4 border-b text-center">Acciones</th>
           </tr>
         </thead>
         <tbody>
           {users.map((user) => (
             <tr key={user.id}>
               <td className="py-2 px-4 border-b text-center">{user.name}</td>
+              <td className="py-2 px-4 border-b text-center">{user.email}</td>
               <td className="py-2 px-4 border-b flex justify-center items-center space-x-4">
                 <button
                   onClick={() => navigate(`/dashboard/users/${user.id}`)}
@@ -60,7 +62,7 @@ const UsersDashboard: React.FC = () => {
                   Editar
                 </button>
                 <label className="flex items-center space-x-2">
-                  <input type="checkbox" className="toggle-switch" />
+                  <input type="checkbox" className="toggle-switch" checked={user.is_active} readOnly />
                   <span>Activo</span>
                 </label>
               </td>
