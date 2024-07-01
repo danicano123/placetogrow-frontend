@@ -1,30 +1,41 @@
-# React + TypeScript + Vite
+# PlateToGrow Frontend v1.0.0
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+PlateToGrow Frontend is a React application designed for managing microsites and their configurations. This application provides a user-friendly interface to create, edit, and manage microsites effectively.
 
-Currently, two official plugins are available:
+## Installation
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+To get started with PlateToGrow Frontend, follow these steps:
 
-## Expanding the ESLint configuration
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/danicano123/placetogrow-frontend.git
+   cd placetogrow-frontend
+   ```
+2. **Install dependencies:**
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```bash
+npm install
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+3. **Run the development server:**
+
+```bash
+npm run dev
+```
+
+This will start the development server. You can view the application by opening http://localhost:5173 in your browser.
+
+## Features
+
+PlateToGrow Frontend includes the following features:
+
+- Microsite Management: Create, edit, and delete microsites with ease.
+- Configuration Options: Set up various configurations such as names, aliases, logos, categories, and more.
+- Real-time Updates: Updates reflect instantly across the application.
+- Responsive Design: Ensures a seamless experience across devices.
+
+## Important Notes
+
+Environment Variables: This project does not require a .env file for configuration.
+Backend Repository
+The backend for PlateToGrow Frontend can be found at https://github.com/danicano123/placetogrow.git.
