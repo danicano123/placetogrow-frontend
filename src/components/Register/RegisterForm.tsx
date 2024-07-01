@@ -27,7 +27,7 @@ const RegisterForm = () => {
 
   useEffect(() => {}, [dispatch]);
   useEffect(() => {
-    auth.isLogged ? navigate("/dashboard") : "";
+    auth.isLogged ? navigate("/") : "";
   }, [auth.isLogged]);
 
   const validationSchema = Yup.object().shape({
