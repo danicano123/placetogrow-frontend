@@ -1,19 +1,27 @@
 import Dashboard from "../components/Dashboard/Dashboard";
 import RegisterForm from "../components/Register/RegisterForm";
 import Login from "../views/Login";
-import MicrositesIndex from "../views/Microsites/MicrositesIndex";
+import CreateMicrosite from "../views/Microsites/CreateMicrosite";
+import EditMicrosite from "../views/Microsites/EditMicrosites";
+import MicrositesDashboard from "../views/Microsites/MicrositesDashboard";
+import MicrositeDetail from "../views/Microsites/MicrositesDetail";
+import MicrositesList from "../views/Microsites/MicrositesList";
 import EditUser from "../views/Users/EditUsers";
 import UsersDashboard from "../views/Users/UsersDashboard";
-import Welcome from "../views/Welcome";
 
 export const RoutesSchema = [
   {
     path: "/",
-    element: Welcome,
+    element: MicrositesList,
+  },
+  {
+    path: "/microsites/:slug",
+    element: MicrositeDetail,
+    isProtected: true,
   },
   {
     path: "*",
-    element: Welcome,
+    element: MicrositesList,
   },
   {
     path: "/login",
@@ -27,6 +35,7 @@ export const RoutesSchema = [
     path: "/dashboard",
     element: Dashboard,
     isProtected: true,
+    requiredRole: "admin",
     children: [
       {
         path: "users",
@@ -36,11 +45,18 @@ export const RoutesSchema = [
         path: "users/:id",
         element: EditUser,
       },
-      
-    ]
-  },
-  {
-    path: "/",
-    element: Welcome,
+      {
+        path: "microsites",
+        element: MicrositesDashboard,
+      },
+      {
+        path: "microsites/:id",
+        element: EditMicrosite,
+      },
+      {
+        path: "microsites/create-microsite",
+        element: CreateMicrosite,
+      },
+    ],
   },
 ];
