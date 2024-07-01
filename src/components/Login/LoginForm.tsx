@@ -19,7 +19,7 @@ const LoginForm = () => {
 
   useEffect(() => {}, [dispatch]);
   useEffect(() => {
-    auth.isLogged ? navigate("/dashboard") : "";
+    auth.isLogged ? navigate("/") : "";
   }, [auth.isLogged]);
   const initialValues: LoginFormValues = {
     email: "",
