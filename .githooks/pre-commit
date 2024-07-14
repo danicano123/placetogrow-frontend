@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Asegurarse de estar en la raíz del proyecto
+cd "$(git rev-parse --show-toplevel)"
+
+# Nombre de la rama actual
+current_branch=$(git symbolic-ref --short HEAD)
+
+# Lista de ramas protegidas
+protected_branches=("main" "develop")
+
+# Verificar si la rama actual está en la lista de ramas protegidas
+if [[ " ${protected_branches[@]} " =~ " ${current_branch} " ]]; then
+    echo "ERROR: No se permite hacer commit directamente en la rama $current_branch"
+    exit 1
+fi
+
+exit 0
