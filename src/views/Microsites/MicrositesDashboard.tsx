@@ -12,7 +12,10 @@ const MicrositesDashboard: React.FC = () => {
   useEffect(() => {
     const fetchMicrosites = async () => {
       try {
-        const { data, statusCode } = await Api.get("/microsites", auth.data.token);
+        const { data, statusCode } = await Api.get(
+          "/microsites",
+          auth.data.token
+        );
         if (statusCode === 200) {
           setMicrosites(data.microsites);
         } else {
@@ -34,15 +37,24 @@ const MicrositesDashboard: React.FC = () => {
     fetchMicrosites();
   }, [auth.data.token]);
 
-  const handleToggleIsActive = async (micrositeId: string, isActive: boolean) => {
+  const handleToggleIsActive = async (
+    micrositeId: string,
+    isActive: boolean
+  ) => {
     try {
-      const response = await Api.patch(`/microsites/${micrositeId}/is-active`, {
-        is_active: !isActive,
-      }, auth.data.token);
+      const response = await Api.patch(
+        `/microsites/${micrositeId}/is-active`,
+        {
+          is_active: !isActive,
+        },
+        auth.data.token
+      );
       const { data, statusCode } = response;
       if (statusCode === 200) {
         const updatedMicrosites = microsites.map((microsite) =>
-          microsite.id === micrositeId ? { ...microsite, is_active: !isActive } : microsite
+          microsite.id === micrositeId
+            ? { ...microsite, is_active: !isActive }
+            : microsite
         );
         setMicrosites(updatedMicrosites);
         Swal.fire({
@@ -69,29 +81,33 @@ const MicrositesDashboard: React.FC = () => {
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold mb-4">Panel De Micrositios</h1>
+        <h1 className="text-2xl font-bold mb-4">Microsites Dashboard</h1>
         <button
           onClick={() => navigate("./create-microsite")}
-          className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mr-4"
+          className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
         >
-          Crear Micrositio
+          Create Microsite
         </button>
       </div>
       <table className="min-w-full bg-white border border-gray-200">
         <thead>
           <tr>
-            <th className="py-2 px-4 border-b text-center">Nombre</th>
-            <th className="py-2 px-4 border-b text-center">Tipo de Micrositio</th>
+            <th className="py-2 px-4 border-b text-center">Name</th>
+            <th className="py-2 px-4 border-b text-center">Microsite Type</th>
             <th className="py-2 px-4 border-b text-center">Logo</th>
-            <th className="py-2 px-4 border-b text-center">Activo</th>
-            <th className="py-2 px-4 border-b text-center">Acciones</th>
+            <th className="py-2 px-4 border-b text-center">Active</th>
+            <th className="py-2 px-4 border-b text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
           {microsites.map((microsite) => (
             <tr key={microsite.id}>
-              <td className="py-2 px-4 border-b text-center">{microsite.name}</td>
-              <td className="py-2 px-4 border-b text-center">{microsite.microsite_type}</td>
+              <td className="py-2 px-4 border-b text-center">
+                {microsite.name}
+              </td>
+              <td className="py-2 px-4 border-b text-center">
+                {microsite.microsite_type}
+              </td>
               <td className="py-2 px-4 border-b text-center">
                 <img
                   src={microsite.logo_url}
@@ -105,17 +121,37 @@ const MicrositesDashboard: React.FC = () => {
                     type="checkbox"
                     className="toggle-switch"
                     checked={microsite.is_active}
-                    onChange={() => handleToggleIsActive(microsite.id, microsite.is_active)}
+                    onChange={() =>
+                      handleToggleIsActive(microsite.id, microsite.is_active)
+                    }
                   />
-                  <span>{microsite.is_active ? "Activo" : "Inactivo"}</span>
+                  <span>{microsite.is_active ? "Active" : "Inactive"}</span>
                 </label>
               </td>
-              <td className="py-2 px-4 border-b text-center">
+              <td className="py-2 px-4 border-b text-center space-x-4">
                 <button
-                  onClick={() => navigate(`/dashboard/microsites/${microsite.id}`)}
+                  onClick={() =>
+                    navigate(`/dashboard/microsites/${microsite.id}`)
+                  }
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 >
-                  Editar
+                  Edit
+                </button>
+                <button
+                  onClick={() =>
+                    navigate(`/dashboard/microsites/form/${microsite.id}`)
+                  }
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Form
+                </button>
+                <button
+                  onClick={() =>
+                    navigate(`/dashboard/microsites/payments/${microsite.id}`)
+                  }
+                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  View Payments
                 </button>
               </td>
             </tr>

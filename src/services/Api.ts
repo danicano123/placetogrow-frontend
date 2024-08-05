@@ -59,7 +59,6 @@ export class Api {
     }
   }
 
-  // Añadir el método PATCH
   static async patch(
     url: string,
     data: any,
@@ -88,6 +87,36 @@ export class Api {
       };
     } catch (error) {
       console.error("Error updating data:", error);
+      throw error;
+    }
+  }
+
+  static async delete(
+    url: string,
+    token?: string
+  ): Promise<{ statusCode: number; data: any }> {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    try {
+      const response = await fetch(`${Api.baseUrl}${url}`, {
+        method: "DELETE",
+        headers: headers,
+      });
+
+      const fetchResult = await response.json();
+
+      return {
+        statusCode: response.status,
+        data: fetchResult,
+      };
+    } catch (error) {
+      console.error("Error deleting data:", error);
       throw error;
     }
   }

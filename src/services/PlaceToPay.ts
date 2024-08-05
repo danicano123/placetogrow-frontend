@@ -1,0 +1,149 @@
+import CryptoJS from "crypto-js";
+import moment from "moment";
+import { Api } from "../services/Api"; // Asegúrate de importar el servicio correcto para la API
+
+const url = import.meta.env.VITE_P2P_ENDPOINT;
+const login = import.meta.env.VITE_P2P_LOGIN;
+const secret_key = import.meta.env.VITE_P2P_SECRET_KEY;
+
+if (!url || !login || !secret_key) {
+  throw new Error("Missing environment variables");
+}
+
+// Función para crear la sesión de pago
+export const createPaymentSession = async (
+  reference: string,
+  description: string,
+  currency: string,
+  total: number,
+  user_id: string,
+  microsite_id: string,
+  token: string
+): Promise<void> => {
+  // Generar nonce aleatorio y codificar en Base64
+  const nonceRaw = CryptoJS.lib.WordArray.random(16);
+  const nonce = CryptoJS.enc.Base64.stringify(nonceRaw);
+
+  // Generar seed en formato ISO 8601
+  const seed = moment().toISOString();
+
+  // Concatenar nonce, seed y secretKey y codificar en Base64 después de aplicar SHA-256
+  const operation = nonceRaw.concat(CryptoJS.enc.Utf8.parse(seed + secret_key));
+  const tranKey = CryptoJS.SHA256(operation).toString(CryptoJS.enc.Base64);
+
+  const data = {
+    auth: {
+      login: login,
+      tranKey,
+      nonce,
+      seed,
+    },
+    payment: {
+      reference,
+      description,
+      amount: {
+        currency,
+        total,
+      },
+    },
+    expiration: new Date(new Date().getTime() + 30 * 60 * 1000).toISOString(),
+    returnUrl: "http://localhost:5173/",
+    ipAddress: "127.0.0.1",
+    userAgent: navigator.userAgent,
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (result.status.status === "OK") {
+      window.open(
+        result.processUrl,
+        "PlaceToPay Lightbox",
+        "width=800,height=600"
+      );
+
+      // Llamar a la API para enviar los datos después de abrir el iframe
+      const requestData = {
+        microsite_id,
+        user_id,
+        request_id: result.requestId,
+      };
+
+      // Asumiendo que tienes un método post en tu servicio Api para enviar los datos
+      const postResponse = await Api.post("/payments", requestData, token);
+
+      if (postResponse.statusCode === 201) {
+        console.log("Payment data sent successfully");
+      } else {
+        console.error("Error sending payment data:", postResponse.data.message);
+      }
+    } else {
+      console.error("Error creating payment session", result);
+    }
+  } catch (error) {
+    console.error(
+      "Error fetching payment session",
+      error instanceof Error ? error.message : error
+    );
+  }
+};
+
+// Función para obtener datos adicionales con requestId
+export const fetchAdditionalData = async (requestId: string): Promise<any> => {
+  // Generar nonce aleatorio y codificar en Base64
+  const nonceRaw = CryptoJS.lib.WordArray.random(16);
+  const nonce = CryptoJS.enc.Base64.stringify(nonceRaw);
+
+  // Generar seed en formato ISO 8601
+  const seed = moment().toISOString();
+
+  // Concatenar nonce, seed y secretKey y codificar en Base64 después de aplicar SHA-256
+  const operation = nonceRaw.concat(CryptoJS.enc.Utf8.parse(seed + secret_key));
+  const tranKey = CryptoJS.SHA256(operation).toString(CryptoJS.enc.Base64);
+
+  const data = {
+    auth: {
+      login: login,
+      tranKey,
+      nonce,
+      seed,
+    },
+  };
+
+  try {
+    const response = await fetch(`${url}/${requestId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      // Devuelve el resultado en lugar de hacer logs
+      return result;
+    } else {
+      // Maneja el error y lanza una excepción para que el llamador pueda manejarlo
+      throw new Error(
+        `Error fetching additional data: ${result.message || "Unknown error"}`
+      );
+    }
+  } catch (error) {
+    // Lanza una excepción para que el llamador pueda manejarlo
+    throw new Error(
+      `Error fetching additional data: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`
+    );
+  }
+};

@@ -7,7 +7,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
 
   return (
     <div className="bg-gradient-to-r from-wood via-gold to-wood-darker min-h-screen flex flex-col">
-      <Header isLogged={auth.isLogged} userName={auth.userName} role={auth.data.role} />
+      <Header isLogged={auth.isLogged} userName={auth.data.name} role={auth.data.role} />
       <div className="flex-grow p-4">{children}</div>
     </div>
   );
