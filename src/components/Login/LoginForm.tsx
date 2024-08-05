@@ -128,6 +128,7 @@ const LoginForm = () => {
                   >
                     Registrarse
                   </Link>
+                  
                 </div>
               </Form>
             )}
