@@ -36,11 +36,17 @@ const MicrositesList: React.FC = () => {
     navigate(`/microsites/${slug}`, { state: { micrositeId } });
   };
 
+  const handleNavigateToform = (slug: string, micrositeId: string) => {
+    navigate(`/microsites/${slug}/form/${micrositeId}`, {
+      state: { micrositeId },
+    });
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Microsites</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {microsites.map((microsite) => (
+        {microsites?.map((microsite) => (
           <div key={microsite.id} className="bg-white rounded-lg shadow-md p-4">
             <div className="flex items-center mb-4">
               <img
@@ -53,12 +59,22 @@ const MicrositesList: React.FC = () => {
                 <p className="text-gray-600">{microsite.microsite_type}</p>
               </div>
             </div>
-            <button
-              onClick={() => handleNavigate(microsite.slug, microsite.id)}
-              className="bg-gold hover:bg-gold-dark text-white font-bold py-2 px-4 rounded-full mt-4"
-            >
-              Ver detalles
-            </button>
+            <div className="py-2 px-4 border-b space-x-4">
+              <button
+                onClick={() => handleNavigate(microsite.slug, microsite.id)}
+                className="bg-gold hover:bg-gold-dark text-white font-bold py-2 px-4 rounded-full mt-4"
+              >
+                Ver detalles
+              </button>
+              <button
+                onClick={() =>
+                  handleNavigateToform(microsite.slug, microsite.id)
+                }
+                className="bg-gold hover:bg-gold-dark text-white font-bold py-2 px-4 rounded-full mt-4"
+              >
+                Acceder
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -67,4 +83,3 @@ const MicrositesList: React.FC = () => {
 };
 
 export default MicrositesList;
-
