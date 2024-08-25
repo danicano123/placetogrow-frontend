@@ -1,8 +1,6 @@
 export class Api {
 
-  static api_url: string = import.meta.env.VITE_API_URL;
-
-  static baseUrl = `${Api.api_url}/api/v1`;
+  static baseUrl = `${import.meta.env.VITE_API_URL}/api/v1`;
 
   static async post<T>(url: string, data: T, token?: string): Promise<any> {
     const headers: Record<string, string> = {
