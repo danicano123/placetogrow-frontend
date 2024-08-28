@@ -5,6 +5,7 @@ import { Api } from "../services/Api"; // Asegúrate de importar el servicio cor
 const url = import.meta.env.VITE_P2P_ENDPOINT;
 const login = import.meta.env.VITE_P2P_LOGIN;
 const secret_key = import.meta.env.VITE_P2P_SECRET_KEY;
+const port = import.meta.env.VITE_PORT;
 
 if (!url || !login || !secret_key) {
   throw new Error("Missing environment variables");
@@ -12,12 +13,19 @@ if (!url || !login || !secret_key) {
 
 // Función para crear la sesión de pago
 export const createPaymentSession = async (
+  payment_expiration_time: number,
   reference: string,
   description: string,
   currency: string,
   total: number,
   user_id: string,
+  name: string,
+  surname: string,
+  email: string,
+  document_type: string,
+  document: string,
   microsite_id: string,
+  slug: string,
   token: string
 ): Promise<void> => {
   // Generar nonce aleatorio y codificar en Base64
@@ -46,8 +54,9 @@ export const createPaymentSession = async (
         total,
       },
     },
-    expiration: new Date(new Date().getTime() + 30 * 60 * 1000).toISOString(),
-    returnUrl: "http://localhost:5173/",
+    payer: {name, surname, email, documentType: document_type, document},
+    expiration: new Date(new Date().getTime() + payment_expiration_time * 60 * 1000).toISOString(),
+    returnUrl: `http://localhost:${port}/microsites/${slug}/form/${microsite_id}`,
     ipAddress: "127.0.0.1",
     userAgent: navigator.userAgent,
   };
@@ -64,11 +73,7 @@ export const createPaymentSession = async (
     const result = await response.json();
 
     if (result.status.status === "OK") {
-      window.open(
-        result.processUrl,
-        "PlaceToPay Lightbox",
-        "width=800,height=600"
-      );
+      window.location.href = result.processUrl;
 
       // Llamar a la API para enviar los datos después de abrir el iframe
       const requestData = {

@@ -60,6 +60,8 @@ const DynamicPayment: React.FC<DynamicPaymentProps> = ({ requestId }) => {
     try {
       const result = await fetchAdditionalData(id);
       setPaymentDetails(result);
+      console.log(result);
+      
     } catch (error) {
       console.error("Error fetching payment details:", error);
     }
