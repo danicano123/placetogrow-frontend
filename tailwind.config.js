@@ -10,7 +10,7 @@ export default {
         wood: '#D2B48C', // Color madera claro
         'wood-darker': '#8B4513', // Color madera oscuro
         gold: '#DAA520', // Color dorado
-        'gold-dark': '#B8860B', // Color dorado oscuro
+        'gold-dark': '#B8860B', // Color dorado oscuro,
       },
       backgroundImage: {
         'white-to-gold': 'linear-gradient(to right, #ffffff, #fff4e6, #ffedcc, #ffe2b3, #ffd699, #ffcc80, #ffbf66, #ffb34d, #ffaa33, #ff9f1a, #ff9900)',
