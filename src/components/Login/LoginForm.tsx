@@ -57,7 +57,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-wood via-gold to-wood-darker min-h-screen flex flex-col">
+    <div className=" min-h-screen flex flex-col">
       <div className="flex-grow flex items-center justify-center p-4">
         <div
           className="p-8 rounded-lg shadow-md w-full max-w-md bg-white bg-opacity-90"
@@ -128,6 +128,7 @@ const LoginForm = () => {
                   >
                     Registrarse
                   </Link>
+                  
                 </div>
               </Form>
             )}

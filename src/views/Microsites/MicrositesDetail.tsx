@@ -14,19 +14,16 @@ const MicrositeDetail: React.FC = () => {
   useEffect(() => {
     const fetchMicrosite = async () => {
       try {
-        const response = await Api.get(
-          `/microsites/${micrositeId}`,
-          auth.data.token
-        );
+        const response = await Api.get(`/microsites/${micrositeId}`, auth.data.token);
         const { data, statusCode } = response;
         if (statusCode === 200) {
           setMicrosite(data.microsite);
         } else {
-          Swal.fire({
-            title: "Error",
-            text: `${data.message}`,
-            icon: "error",
-          });
+          // Swal.fire({
+          //   title: "Error",
+          //   text: `${data.message}`,
+          //   icon: "error",
+          // });
         }
       } catch (error: any) {
         Swal.fire({
@@ -40,104 +37,41 @@ const MicrositeDetail: React.FC = () => {
     fetchMicrosite();
   }, [micrositeId, auth.data.token]);
 
-  if (!microsite) return <div>Cargando...</div>;
+  if (!microsite) return <div className="text-center py-4">Loading...</div>;
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Detalle del Micrositio</h1>
-      <div className="bg-white p-4 rounded shadow-md">
-        <div className="mb-4">
-          <label className="block text-gray-700">Nombre</label>
-          <input
-            type="text"
-            className="w-full p-2 border border-gray-300 rounded"
-            value={microsite.name}
-            readOnly
-          />
+    <div className="container mx-auto p-4 max-w-lg">
+      <h1 className="text-3xl font-bold mb-6 text-center">Microsite Details</h1>
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+        <div className="space-y-4">
+          <DetailItem label="Name" value={microsite.name} />
+          <DetailItem label="Alias" value={microsite.slug} />
+          <DetailItem label="Logo URL" value={microsite.logo_url} />
+          <DetailItem label="Category" value={microsite.category} />
+          <DetailItem label="Microsite Type" value={microsite.microsite_type} />
+          <DetailItem label="Currency Type" value={microsite.currency_type} />
+          <DetailItem label="Payment Expiration Time (minutes)" value={microsite.payment_expiration_time?.toString()} />
+          <DetailItem label="Document Type" value={microsite.document_type} />
+          <DetailItem label="Document" value={microsite.document} />
         </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Alias</label>
-          <input
-            type="text"
-            className="w-full p-2 border border-gray-300 rounded"
-            value={microsite.slug}
-            readOnly
-          />
+        <div className="flex justify-end mt-6">
+          <button
+            onClick={() => navigate("/")}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+          >
+            Go Back
+          </button>
         </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Logo URL</label>
-          <input
-            type="text"
-            className="w-full p-2 border border-gray-300 rounded"
-            value={microsite.logo_url}
-            readOnly
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Categoría</label>
-          <input
-            type="text"
-            className="w-full p-2 border border-gray-300 rounded"
-            value={microsite.category}
-            readOnly
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Tipo de Micrositio</label>
-          <input
-            type="text"
-            className="w-full p-2 border border-gray-300 rounded"
-            value={microsite.microsite_type}
-            readOnly
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Tipo de Moneda</label>
-          <input
-            type="text"
-            className="w-full p-2 border border-gray-300 rounded"
-            value={microsite.currency_type}
-            readOnly
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">
-            Tiempo de Expiración del Pago (minutos)
-          </label>
-          <input
-            type="number"
-            className="w-full p-2 border border-gray-300 rounded"
-            value={microsite.payment_expiration_time}
-            readOnly
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Tipo de Documento</label>
-          <input
-            type="text"
-            className="w-full p-2 border border-gray-300 rounded"
-            value={microsite.document_type}
-            readOnly
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Documento</label>
-          <input
-            type="text"
-            className="w-full p-2 border border-gray-300 rounded"
-            value={microsite.document}
-            readOnly
-          />
-        </div>
-        <button
-          onClick={() => navigate("/")}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Regresar
-        </button>
       </div>
     </div>
   );
 };
+
+const DetailItem: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+  <div className="flex items-center justify-between p-2 border-b border-gray-200">
+    <span className="font-medium text-gray-700">{label}:</span>
+    <span className="text-gray-900 text-left w-3/4">{value}</span>
+  </div>
+);
 
 export default MicrositeDetail;
