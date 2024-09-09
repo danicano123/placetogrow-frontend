@@ -19,11 +19,11 @@ const MicrositeDetail: React.FC = () => {
         if (statusCode === 200) {
           setMicrosite(data.microsite);
         } else {
-          Swal.fire({
-            title: "Error",
-            text: `${data.message}`,
-            icon: "error",
-          });
+          // Swal.fire({
+          //   title: "Error",
+          //   text: `${data.message}`,
+          //   icon: "error",
+          // });
         }
       } catch (error: any) {
         Swal.fire({

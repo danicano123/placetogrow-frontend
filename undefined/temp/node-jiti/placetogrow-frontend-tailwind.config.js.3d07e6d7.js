@@ -1,5 +1,5 @@
-/** @type {import('tailwindcss').Config} */
-export default {
+"use strict";Object.defineProperty(exports, "__esModule", {value: true});/** @type {import('tailwindcss').Config} */
+exports. default = {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -20,3 +20,4 @@ export default {
   },
   plugins: [],
 }
+ /* v7-169a7994808d58eb */

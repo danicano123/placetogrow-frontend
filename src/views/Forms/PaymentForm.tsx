@@ -32,10 +32,38 @@ interface Form {
 }
 
 const PaymentForm: React.FC = () => {
-  const { micrositeId } = useParams<{ micrositeId: string }>();
+  const { micrositeId, slug } = useParams<{ micrositeId: string; slug: string }>();
   const [form, setForm] = useState<Form | null>(null);
+  const [microsite, setMicrosite] = useState<any>(null);
   const [selectedProduct, setSelectedProduct] = useState<FormField | null>(null);
+  const [formValues, setFormValues] = useState<{ [key: string]: string }>({"Document Type": "CC"});
   const auth = useSelector((state: any) => state.auth);
+
+  useEffect(() => {
+    const fetchMicrosite = async () => {
+      try {
+        const response = await Api.get(`/microsites/${micrositeId}`, auth.data.token);
+        const { data, statusCode } = response;
+        if (statusCode === 200) {
+          setMicrosite(data.microsite);
+        } else {
+          // Swal.fire({
+          //   title: "Error",
+          //   text: `${data.message}`,
+          //   icon: "error",
+          // });
+        }
+      } catch (error: any) {
+        Swal.fire({
+          title: "Error",
+          text: `${error.message}`,
+          icon: "error",
+        });
+      }
+    };
+
+    fetchMicrosite();
+  }, [micrositeId, auth.data.token]);
 
   const fetchForm = async () => {
     try {
@@ -44,11 +72,11 @@ const PaymentForm: React.FC = () => {
       if (statusCode === 200) {
         setForm(data);
       } else {
-        Swal.fire({
-          title: "Error",
-          text: `${data.message}`,
-          icon: "error",
-        });
+        // Swal.fire({
+        //   title: "Error",
+        //   text: `${data.message}`,
+        //   icon: "error",
+        // });
       }
     } catch (error: any) {
       Swal.fire({
@@ -63,8 +91,12 @@ const PaymentForm: React.FC = () => {
     fetchForm();
   }, [micrositeId, auth.data.token]);
 
-  const handleFieldChange = (id: number, value: string | number) => {
-    // Manejo de cambios en los campos del formulario
+  const handleFieldChange = (name: string, value: string | number) => {
+    // Actualizar el estado de formValues con el nuevo valor
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      [name]: value.toString(),      
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -78,15 +110,35 @@ const PaymentForm: React.FC = () => {
       return;
     }
 
+    // Aquí puedes acceder a los valores de los campos a través de formValues
+    console.log(        formValues["Document Type"].valueOf(),
+    formValues["Document"].valueOf(),);
+
     // Recopilar todos los datos necesarios para la sesión de pago
     const reference = selectedProduct.name;
     const description = selectedProduct.description || "No description";
-    const currency = "USD";
+    const currency = microsite.currency_type;
     const total = selectedProduct.value || 0;
+    const payment_expiration_time = microsite.payment_expiration_time;
 
     try {
       // Llamar a la función para crear la sesión de pago con todos los datos necesarios
-      await createPaymentSession(reference, description, currency, total, auth.data.user.id, micrositeId!, auth.data.token);
+      await createPaymentSession(
+        payment_expiration_time,
+        reference,
+        description,
+        currency,
+        total,
+        auth.data.user.id,
+        auth.data.user.first_name + " " + (auth.data.user.second_name || ""),
+        auth.data.user.first_surname + " " + (auth.data.user.second_surname || ""),
+        auth.data.user.email,
+        formValues["Document Type"].valueOf(),
+        formValues["Document"].valueOf(),
+        micrositeId!,
+        slug!,
+        auth.data.token
+      );
     } catch (error) {
       console.error("Error creating payment session:", error);
       Swal.fire({
@@ -109,11 +161,11 @@ const PaymentForm: React.FC = () => {
                 <DynamicFormField
                   key={field.id}
                   id={field.id}
-                  type={field.type}
                   name={field.name}
+                  type={field.type}
                   options={field.options}
                   isRequired={field.is_required}
-                  onChange={(value) => handleFieldChange(field.id, value)}
+                  onChange={(value) => handleFieldChange(field.name, field.type == 'select'? field.name :value)}  // Pasar name en lugar de id
                 />
               ))}
           </div>

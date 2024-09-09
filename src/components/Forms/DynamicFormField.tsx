@@ -26,7 +26,7 @@ const DynamicFormField: React.FC<DynamicFormFieldProps> = ({
   const [value, setValue] = useState<string | number>("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const newValue = e.target.value;
+    const newValue = e.target.value;    
     setValue(newValue);
     onChange(newValue);
   };
@@ -60,7 +60,7 @@ const DynamicFormField: React.FC<DynamicFormFieldProps> = ({
           required={isRequired}
         >
           {options?.map((option) => (
-            <option key={option.id} value={option.id}>
+            <option key={option.id} value={option.name}>
               {option.name}
             </option>
           ))}

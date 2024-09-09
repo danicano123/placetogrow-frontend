@@ -8,7 +8,6 @@ import * as Yup from "yup";
 
 // Constants from backend
 const MicrositeTypes = ["invoice", "subscription", "payment", "donation"];
-const DocumentTypes = ["CC", "NIT", "TI", "PPT"];
 const CurrencyTypes = ["COP", "USD", "JPY"];
 
 const CreateMicrosite: React.FC = () => {
@@ -23,9 +22,7 @@ const CreateMicrosite: React.FC = () => {
     category: "",
     microsite_type: "",
     currency_type: "",
-    payment_expiration_time: "",
-    document_type: "",
-    document: "",
+    payment_expiration_time: 6,
   };
 
   const validationSchema = Yup.object({
@@ -40,6 +37,9 @@ const CreateMicrosite: React.FC = () => {
       .required("Required"),
     microsite_type: Yup.string().required("Required"),
     currency_type: Yup.string().required("Required"),
+    payment_expiration_time: Yup.number()
+    .min(6, "Must be 6 minutes or more")
+    .required("Required"),
   });
 
   const handleSubmit = async (values: any) => {
@@ -176,29 +176,6 @@ const CreateMicrosite: React.FC = () => {
               <Field
                 name="payment_expiration_time"
                 type="number"
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Document Type</label>
-              <Field
-                as="select"
-                name="document_type"
-                className="w-full p-2 border border-gray-300 rounded"
-              >
-                <option value="">Select document type</option>
-                {DocumentTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </Field>
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Document</label>
-              <Field
-                name="document"
-                type="text"
                 className="w-full p-2 border border-gray-300 rounded"
               />
             </div>
