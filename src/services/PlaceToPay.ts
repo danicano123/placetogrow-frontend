@@ -5,7 +5,7 @@ import { Api } from "../services/Api"; // Asegúrate de importar el servicio cor
 const url = import.meta.env.VITE_P2P_ENDPOINT;
 const login = import.meta.env.VITE_P2P_LOGIN;
 const secret_key = import.meta.env.VITE_P2P_SECRET_KEY;
-const port = import.meta.env.VITE_PORT;
+const port = import.meta.env.VITE_PORT || 5173; 
 
 if (!url || !login || !secret_key) {
   throw new Error("Missing environment variables");
@@ -134,8 +134,8 @@ export const fetchAdditionalData = async (requestId: string): Promise<any> => {
 
     const result = await response.json();
 
-    if (response.ok) {
-      // Devuelve el resultado en lugar de hacer logs
+    if (response.ok) {  
+      result.aditionalData = response;    
       return result;
     } else {
       // Maneja el error y lanza una excepción para que el llamador pueda manejarlo
