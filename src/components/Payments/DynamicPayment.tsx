@@ -143,7 +143,7 @@ const DynamicPayment: React.FC<DynamicPaymentProps> = ({
         <td className="px-4 py-2">
           <button
             onClick={handleRetryPayment}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            className="bg-action-button hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
             Retry Payment
           </button>

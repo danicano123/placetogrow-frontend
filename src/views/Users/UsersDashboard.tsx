@@ -57,7 +57,7 @@ const UsersDashboard: React.FC = () => {
               <td className="py-2 px-4 border-b flex justify-center items-center space-x-4">
                 <button
                   onClick={() => navigate(`/dashboard/users/${user.id}`)}
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  className="bg-action-button hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 >
                   Editar
                 </button>
