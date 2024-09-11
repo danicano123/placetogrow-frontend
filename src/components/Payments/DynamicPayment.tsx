@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Swal from "sweetalert2";
-import { fetchAdditionalData, createPaymentSession } from "../../services/PlaceToPay";
+import {
+  fetchAdditionalData,
+  createPaymentSession,
+} from "../../services/PlaceToPay";
+import { Api } from "../../services/Api";
+import { useSelector } from "react-redux";
 
 // Interfaces
 interface PaymentStatus {
@@ -30,11 +34,17 @@ interface PaymentRequest {
   amount: Amount;
 }
 
+interface Payer {
+  document: string;
+  documentType: string;
+}
+
 interface PaymentDetails {
   requestId: number;
   status: PaymentStatus;
   request: {
     payment: PaymentRequest;
+    payer: Payer;
   };
   payment: {
     status: PaymentStatus;
@@ -48,33 +58,64 @@ interface PaymentDetails {
 }
 
 interface DynamicPaymentProps {
+  paymentId: number;
   requestId: string;
+  micrositeId: string;
+  token: string;
 }
 
 // Componente
-const DynamicPayment: React.FC<DynamicPaymentProps> = ({ requestId }) => {
-  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
-  const authToken = 'your-auth-token'; // Reemplaza con el token adecuado si es necesario
+const DynamicPayment: React.FC<DynamicPaymentProps> = ({
+  paymentId,
+  requestId,
+  micrositeId,
+  token,
+}) => {
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(
+    null
+  );
+  const auth = useSelector((state: any) => state.auth);
 
   const fetchPaymentDetails = async (id: string) => {
     try {
       const result = await fetchAdditionalData(id);
       setPaymentDetails(result);
       console.log(result);
-      
     } catch (error) {
       console.error("Error fetching payment details:", error);
     }
   };
 
+  const fetchMicrosite = async (micrositeId: string, token: string) => {
+    const response = await Api.get(`/microsites/${micrositeId}`, token);
+    const { data, statusCode } = response;
+    if (statusCode === 200) {
+      return data.microsite;
+    } else {
+    }
+  };
+
   const handleRetryPayment = async () => {
     if (paymentDetails) {
-      const payment = paymentDetails.request.payment;
-      const { reference, description, amount } = payment;
-      const currency = amount.currency;
-      const total = amount.total;
-      // Llama a la función de crear sesión con parámetros correctos
-      await createPaymentSession(reference, description, currency, total, 'user-id', 'microsite-id', authToken);
+      const deleteResponse = await Api.delete(`/payments/${paymentId}`, token);
+      if (deleteResponse.statusCode === 200) {
+        const micrositeData = await fetchMicrosite(micrositeId, token);
+        const payment = paymentDetails.request;
+        const { reference, description, amount } = payment.payment;
+        const { document, documentType } = payment.payer;
+        const total = amount.total;
+        
+        await createPaymentSession(
+          reference,
+          description,
+          total,
+          documentType,
+          document,
+          micrositeId,
+          micrositeData.slug,
+          auth
+        );
+      }
     }
   };
 
@@ -87,14 +128,17 @@ const DynamicPayment: React.FC<DynamicPaymentProps> = ({ requestId }) => {
   }
 
   const paymentStatus = paymentDetails.status.status;
-  const showRetryButton = paymentStatus === "REJECTED" || paymentStatus === "PENDING";
+  const showRetryButton =
+    paymentStatus === "REJECTED" || paymentStatus === "PENDING";
 
   return (
     <tr className="border-b">
       <td className="px-4 py-2">{paymentDetails.requestId}</td>
       <td className="px-4 py-2">{paymentStatus}</td>
       <td className="px-4 py-2">{paymentDetails.request.payment.reference}</td>
-      <td className="px-4 py-2">{paymentDetails.request.payment.amount.total}</td>
+      <td className="px-4 py-2">
+        {paymentDetails.request.payment.amount.total}
+      </td>
       {showRetryButton && (
         <td className="px-4 py-2">
           <button

@@ -4,15 +4,16 @@ import DynamicPayment from "../../components/Payments/DynamicPayment";
 import { Api } from "../../services/Api";
 
 const PaymentsList: React.FC = () => {
-  const [payments, setPayments] = useState<string[]>([]);
+  const [payments, setPayments] = useState<any>([{}]);
   const auth = useSelector((state: any) => state.auth);
-
+ // TODO: converit esos log en sweet alert
   const fetchUserPayments = async () => {
     try {
       const response = await Api.get(`/payments/user/${auth.data.user.id}`, auth.data.token);
       const { data, statusCode } = response;      
+      
       if (statusCode === 200) {
-        setPayments(data.map((payment: any) => payment.request_id));        
+        setPayments(data.map((payment: any) => payment));        
       } else {
         console.error("Error fetching payments:", data.message);
       }
@@ -40,8 +41,8 @@ const PaymentsList: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {payments.map((requestId) => (
-              <DynamicPayment key={requestId} requestId={requestId} />
+            {payments.map((payment: any) => (              
+              <DynamicPayment key={payment.id} paymentId={payment.id} requestId={payment.request_id} token={auth.data.token} micrositeId={payment.microsite_id}/>
             ))}
           </tbody>
         </table>

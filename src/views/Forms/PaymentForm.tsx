@@ -34,36 +34,9 @@ interface Form {
 const PaymentForm: React.FC = () => {
   const { micrositeId, slug } = useParams<{ micrositeId: string; slug: string }>();
   const [form, setForm] = useState<Form | null>(null);
-  const [microsite, setMicrosite] = useState<any>(null);
   const [selectedProduct, setSelectedProduct] = useState<FormField | null>(null);
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({"Document Type": "CC"});
   const auth = useSelector((state: any) => state.auth);
-
-  useEffect(() => {
-    const fetchMicrosite = async () => {
-      try {
-        const response = await Api.get(`/microsites/${micrositeId}`, auth.data.token);
-        const { data, statusCode } = response;
-        if (statusCode === 200) {
-          setMicrosite(data.microsite);
-        } else {
-          // Swal.fire({
-          //   title: "Error",
-          //   text: `${data.message}`,
-          //   icon: "error",
-          // });
-        }
-      } catch (error: any) {
-        Swal.fire({
-          title: "Error",
-          text: `${error.message}`,
-          icon: "error",
-        });
-      }
-    };
-
-    fetchMicrosite();
-  }, [micrositeId, auth.data.token]);
 
   const fetchForm = async () => {
     try {
@@ -110,34 +83,22 @@ const PaymentForm: React.FC = () => {
       return;
     }
 
-    // Aquí puedes acceder a los valores de los campos a través de formValues
-    console.log(        formValues["Document Type"].valueOf(),
-    formValues["Document"].valueOf(),);
-
     // Recopilar todos los datos necesarios para la sesión de pago
     const reference = selectedProduct.name;
     const description = selectedProduct.description || "No description";
-    const currency = microsite.currency_type;
     const total = selectedProduct.value || 0;
-    const payment_expiration_time = microsite.payment_expiration_time;
 
     try {
       // Llamar a la función para crear la sesión de pago con todos los datos necesarios
       await createPaymentSession(
-        payment_expiration_time,
         reference,
         description,
-        currency,
         total,
-        auth.data.user.id,
-        auth.data.user.first_name + " " + (auth.data.user.second_name || ""),
-        auth.data.user.first_surname + " " + (auth.data.user.second_surname || ""),
-        auth.data.user.email,
         formValues["Document Type"].valueOf(),
         formValues["Document"].valueOf(),
         micrositeId!,
         slug!,
-        auth.data.token
+        auth,
       );
     } catch (error) {
       console.error("Error creating payment session:", error);

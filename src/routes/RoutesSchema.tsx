@@ -1,6 +1,6 @@
 import Dashboard from "../components/Dashboard/Dashboard";
 import RegisterForm from "../components/Register/RegisterForm";
-import EditForm from "../views/Forms/EditForm";
+import EditMicrositeForm from "../views/Forms/EditMicrositeForm";
 import PaymentForm from "../views/Forms/PaymentForm";
 import Login from "../views/Login";
 import CreateMicrosite from "../views/Microsites/CreateMicrosite";
@@ -73,7 +73,7 @@ export const RoutesSchema = [
       },
       {
         path: "microsites/form/:microsite_id",
-        element: EditForm,
+        element: EditMicrositeForm,
       },
       {
         path: "microsites/payments/:micrositeId",
