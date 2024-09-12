@@ -38,7 +38,7 @@ const MicrositeDetail: React.FC = () => {
   }, [micrositeId, auth.data.token]);
 
   if (!microsite) return <div className="text-center py-4">Loading...</div>;
-
+  
   return (
     <div className="container mx-auto p-4 max-w-lg">
       <h1 className="text-3xl font-bold mb-6 text-center">Microsite Details</h1>
@@ -51,8 +51,6 @@ const MicrositeDetail: React.FC = () => {
           <DetailItem label="Microsite Type" value={microsite.microsite_type} />
           <DetailItem label="Currency Type" value={microsite.currency_type} />
           <DetailItem label="Payment Expiration Time (minutes)" value={microsite.payment_expiration_time?.toString()} />
-          <DetailItem label="Document Type" value={microsite.document_type} />
-          <DetailItem label="Document" value={microsite.document} />
         </div>
         <div className="flex justify-end mt-6">
           <button
