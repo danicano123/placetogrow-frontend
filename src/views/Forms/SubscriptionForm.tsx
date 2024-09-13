@@ -3,9 +3,10 @@ import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useSelector } from "react-redux";
 import DynamicFormField from "../../components/Forms/DynamicFormField";
-import DynamicProduct from "../../components/Products/DynamicProduct";
+
 import { Api } from "../../services/Api";
-import { createPaymentSession } from "../../services/PlaceToPay";
+import { createSubscriptionToken } from "../../services/PlaceToPay";
+import DynamicSubscription from "../../components/Subscriptions/DynamicSubscription";
 
 interface FormFieldOption {
   id: number;
@@ -15,7 +16,7 @@ interface FormFieldOption {
 interface FormField {
   id: number;
   name: string;
-  type: "text" | "select" | "number" | "product";
+  type: "text" | "select" | "number" | "subscription";
   is_required: boolean;
   options?: FormFieldOption[];
   description?: string;
@@ -31,10 +32,10 @@ interface Form {
   microsite_id: number;
 }
 
-const PaymentForm: React.FC = () => {
+const SubscriptionForm: React.FC = () => {
   const { micrositeId, slug } = useParams<{ micrositeId: string; slug: string }>();
   const [form, setForm] = useState<Form | null>(null);
-  const [selectedProduct, setSelectedProduct] = useState<FormField | null>(null);
+  const [selectedSubscription, setSelectedsubscription] = useState<FormField | null>(null);
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({"Document Type": "CC"});
   const auth = useSelector((state: any) => state.auth);
 
@@ -45,11 +46,11 @@ const PaymentForm: React.FC = () => {
       if (statusCode === 200) {
         setForm(data);
       } else {
-        Swal.fire({
-          title: "Error",
-          text: `${data.message}`,
-          icon: "error",
-        });
+        // Swal.fire({
+        //   title: "Error",
+        //   text: `${data.message}`,
+        //   icon: "error",
+        // });
       }
     } catch (error: any) {
       Swal.fire({
@@ -74,7 +75,7 @@ const PaymentForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedProduct) {
+    if (!selectedSubscription) {
       Swal.fire({
         title: "Error",
         text: "Please select a product",
@@ -84,19 +85,18 @@ const PaymentForm: React.FC = () => {
     }
 
     // Recopilar todos los datos necesarios para la sesión de pago
-    const reference = selectedProduct.name;
-    const description = selectedProduct.description || "No description";
-    const total = selectedProduct.value || 0;
+    const reference = selectedSubscription.name;
+    const description = selectedSubscription.description || "No description";
+    const total = selectedSubscription.value || 0;
+console.log(auth);
 
     try {
-      // Llamar a la función para crear la sesión de pago con todos los datos necesarios
-      await createPaymentSession(
+      await createSubscriptionToken(
         reference,
         description,
-        total,
+        micrositeId!,
         formValues["Document Type"].valueOf(),
         formValues["Document"].valueOf(),
-        micrositeId!,
         slug!,
         auth,
       );
@@ -117,7 +117,7 @@ const PaymentForm: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
             {form.fields
-              .filter((field) => field.type !== "product")
+              .filter((field) => field.type !== "subscription")
               .map((field) => (
                 <DynamicFormField
                   key={field.id}
@@ -132,17 +132,17 @@ const PaymentForm: React.FC = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {form.fields
-              .filter((field) => field.type === "product")
-              .map((product) => (
-                <DynamicProduct
-                  key={product.id}
-                  id={product.id}
-                  name={product.name}
-                  url_img={product.url_img}
-                  description={product.description}
-                  value={product.value}
-                  isSelected={selectedProduct?.id === product.id}
-                  onSelect={() => setSelectedProduct(product)}
+              .filter((field) => field.type === "subscription")
+              .map((subscription) => (
+                <DynamicSubscription
+                  key={subscription.id}
+                  id={subscription.id}
+                  name={subscription.name}
+                  url_img={subscription.url_img}
+                  description={subscription.description}
+                  value={subscription.value}
+                  isSelected={selectedSubscription?.id === subscription.id}
+                  onSelect={() => setSelectedsubscription(subscription)}
                 />
               ))}
           </div>
@@ -160,4 +160,4 @@ const PaymentForm: React.FC = () => {
   );
 };
 
-export default PaymentForm;
+export default SubscriptionForm;

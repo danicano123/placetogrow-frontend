@@ -7,6 +7,8 @@ import CreateFormFieldModal from "../../components/Forms/CreateFormFieldModal";
 import CreateProductModal from "../../components/Products/CreateProductModal";
 import DynamicProductEdit from "../../components/Products/DynamicProductEdit";
 import { Api } from "../../services/Api";
+import DynamicSubscriptionEdit from "../../components/Subscriptions/DynamicSubscriptionEdit";
+import CreateSubscriptionModal from "../../components/Subscriptions/CreateSubscriptionModal";
 
 interface FormFieldOption {
   id: number;
@@ -16,7 +18,7 @@ interface FormFieldOption {
 interface FormField {
   id: number;
   name: string;
-  type: "text" | "select" | "number" | "product";
+  type: "text" | "select" | "number" | "product" | "subscription";
   is_required: boolean;
   options?: FormFieldOption[];
   description?: string;
@@ -36,8 +38,34 @@ const EditForm: React.FC = () => {
   const { microsite_id } = useParams<{ microsite_id: string }>();
   const [form, setForm] = useState<Form | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [microsite, setMicrosite] = useState<any>();
   const [showCreateProductModal, setShowCreateProductModal] = useState(false);
   const auth = useSelector((state: any) => state.auth);
+
+  const fetchMicrosite = async () => {
+    try {
+      const response = await Api.get(
+        `/microsites/${microsite_id}`,
+        auth.data.token
+      );
+      const { data, statusCode } = response;
+      if (statusCode === 200) {
+        setMicrosite(data.microsite);
+      } else {
+        // Swal.fire({
+        //   title: "Error",
+        //   text: `${data.message}`,
+        //   icon: "error",
+        // });
+      }
+    } catch (error: any) {
+      Swal.fire({
+        title: "Error",
+        text: `${error.message}`,
+        icon: "error",
+      });
+    }
+  };
 
   const fetchForm = async () => {
     try {
@@ -65,6 +93,7 @@ const EditForm: React.FC = () => {
   };
 
   useEffect(() => {
+    fetchMicrosite();
     fetchForm();
   }, [microsite_id, auth.data.token]);
 
@@ -75,6 +104,7 @@ const EditForm: React.FC = () => {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">Edit Form</h1>
+      {!form && <h2>Loading...</h2>}
       {form && (
         <div>
           <div className="mb-4">
@@ -86,7 +116,10 @@ const EditForm: React.FC = () => {
               Add Field
             </button>
             {form.fields
-              .filter((field) => field.type !== "product")
+              .filter(
+                (field) =>
+                  field.type !== "product" && field.type !== "subscription"
+              )
               .map((field) => (
                 <DynamicFormFieldEdit key={field.id} {...field} />
               ))}
@@ -100,31 +133,60 @@ const EditForm: React.FC = () => {
               />
             )}
           </div>
-          <div className="mb-4">
-            <h2 className="text-xl font-bold mb-2">Products</h2>
-            <button
-              onClick={() => setShowCreateProductModal(true)}
-              className="bg-green-600 text-white px-4 py-2 rounded mt-2 mb-4"
-            >
-              Add Product
-            </button>
-            <div className="flex flex-wrap -mx-4">
-              {form.fields
-                .filter((field) => field.type === "product")
-                .map((product) => (
-                  <DynamicProductEdit key={product.id} {...product} />
-                ))}
+          {microsite!.microsite_type === "payment" && (
+            <div className="mb-4">
+              <h2 className="text-xl font-bold mb-2">Products</h2>
+              <button
+                onClick={() => setShowCreateProductModal(true)}
+                className="bg-green-600 text-white px-4 py-2 rounded mt-2 mb-4"
+              >
+                Add Product
+              </button>
+              <div className="flex flex-wrap -mx-4">
+                {form.fields
+                  .filter((field) => field.type === "product")
+                  .map((product) => (
+                    <DynamicProductEdit key={product.id} {...product} />
+                  ))}
+              </div>
+              {showCreateProductModal && (
+                <CreateProductModal
+                  formId={Number(form.id)}
+                  onClose={() => {
+                    setShowCreateProductModal(false);
+                    reloadForm();
+                  }}
+                />
+              )}
             </div>
-            {showCreateProductModal && (
-              <CreateProductModal
-                formId={Number(form.id)}
-                onClose={() => {
-                  setShowCreateProductModal(false);
-                  reloadForm();
-                }}
-              />
-            )}
-          </div>
+          )}
+          {microsite!.microsite_type === "subscription" && (
+            <div className="mb-4">
+              <h2 className="text-xl font-bold mb-2">Services</h2>
+              <button
+                onClick={() => setShowCreateProductModal(true)}
+                className="bg-green-600 text-white px-4 py-2 rounded mt-2 mb-4"
+              >
+                Add Service
+              </button>
+              <div className="flex flex-wrap -mx-4">
+                {form.fields
+                  .filter((field) => field.type === "subscription")
+                  .map((product) => (
+                    <DynamicSubscriptionEdit key={product.id} {...product} />
+                  ))}
+              </div>
+              {showCreateProductModal && (
+                <CreateSubscriptionModal
+                  formId={Number(form.id)}
+                  onClose={() => {
+                    setShowCreateProductModal(false);
+                    reloadForm();
+                  }}
+                />
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

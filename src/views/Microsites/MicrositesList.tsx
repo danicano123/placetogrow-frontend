@@ -36,10 +36,18 @@ const MicrositesList: React.FC = () => {
     navigate(`/microsites/${slug}`, { state: { micrositeId } });
   };
 
-  const handleNavigateToform = (slug: string, micrositeId: string) => {
-    navigate(`/microsites/${slug}/form/${micrositeId}`, {
-      state: { micrositeId },
-    });
+  const handleNavigateToform = (microsite: any) => {
+    if (microsite.microsite_type === "payment") {
+      navigate(`/microsites/payments/${microsite.slug}/form/${microsite.id}`, {
+        state: { micrositeId: microsite.id },
+      });
+    }
+
+    if (microsite.microsite_type === "subscription") {
+      navigate(`/microsites/subscriptions/${microsite.slug}/form/${microsite.id}`, {
+        state: { micrositeId: microsite.id },
+      });
+    }
   };
 
   return (
@@ -67,9 +75,7 @@ const MicrositesList: React.FC = () => {
                 Ver detalles
               </button>
               <button
-                onClick={() =>
-                  handleNavigateToform(microsite.slug, microsite.id)
-                }
+                onClick={() => handleNavigateToform(microsite)}
                 className="bg-gold hover:bg-gold-dark text-white font-bold py-2 px-4 rounded-full mt-4"
               >
                 Acceder
