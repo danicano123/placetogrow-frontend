@@ -1,7 +1,8 @@
 import Dashboard from "../components/Dashboard/Dashboard";
 import RegisterForm from "../components/Register/RegisterForm";
-import EditForm from "../views/Forms/EditForm";
+import EditMicrositeForm from "../views/Forms/EditMicrositeForm";
 import PaymentForm from "../views/Forms/PaymentForm";
+import SubscriptionForm from "../views/Forms/SubscriptionForm";
 import Login from "../views/Login";
 import CreateMicrosite from "../views/Microsites/CreateMicrosite";
 import EditMicrosite from "../views/Microsites/EditMicrosites";
@@ -24,8 +25,18 @@ export const RoutesSchema = [
     isProtected: true,
   },
   {
-    path: "/microsites/:slug/form/:micrositeId",
+    path: "/microsites/payments/:slug/form/:micrositeId",
     element: PaymentForm,
+    isProtected: true,
+  },
+  {
+    path: "/payment-overview/:id",
+    element: PaymentForm,
+    isProtected: true,
+  },
+  {
+    path: "/microsites/subscriptions/:slug/form/:micrositeId",
+    element: SubscriptionForm,
     isProtected: true,
   },
   {
@@ -73,7 +84,7 @@ export const RoutesSchema = [
       },
       {
         path: "microsites/form/:microsite_id",
-        element: EditForm,
+        element: EditMicrositeForm,
       },
       {
         path: "microsites/payments/:micrositeId",

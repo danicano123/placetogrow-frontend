@@ -5,6 +5,7 @@ import {
 } from "../../services/PlaceToPay";
 import { Api } from "../../services/Api";
 import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 
 // Interfaces
 interface PaymentStatus {
@@ -12,10 +13,6 @@ interface PaymentStatus {
   reason: string;
   message: string;
   date: string;
-}
-
-interface Subscription {
-  instrument: [{ key: string; value: string }];
 }
 
 interface Amount {
@@ -49,9 +46,7 @@ interface PaymentDetails {
   request: {
     payment: PaymentRequest;
     payer: Payer;
-    subscription: { reference: string };
   };
-  subscription: Subscription;
   payment: {
     status: PaymentStatus;
     reference: string;
@@ -71,7 +66,7 @@ interface DynamicPaymentProps {
 }
 
 // Componente
-const DynamicPayment: React.FC<DynamicPaymentProps> = ({
+const PaymentOverview: React.FC<DynamicPaymentProps> = ({
   paymentId,
   requestId,
   micrositeId,
@@ -80,12 +75,15 @@ const DynamicPayment: React.FC<DynamicPaymentProps> = ({
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(
     null
   );
+  const navigate = useNavigate();
+  const { id } = useParams();
   const auth = useSelector((state: any) => state.auth);
 
   const fetchPaymentDetails = async (id: string) => {
     try {
       const result = await fetchAdditionalData(id);
       setPaymentDetails(result);
+      console.log(result);
     } catch (error) {
       console.error("Error fetching payment details:", error);
     }
@@ -109,7 +107,7 @@ const DynamicPayment: React.FC<DynamicPaymentProps> = ({
         const { reference, description, amount } = payment.payment;
         const { document, documentType } = payment.payer;
         const total = amount.total;
-
+        
         await createPaymentSession(
           reference,
           description,
@@ -119,18 +117,6 @@ const DynamicPayment: React.FC<DynamicPaymentProps> = ({
           micrositeId,
           micrositeData.slug,
           auth
-        );
-      }
-    }
-  };
-
-  const handleCancelSubscription = async () => {
-    if (paymentDetails) {
-      const deleteResponse = await Api.delete(`/payments/${paymentId}`, token);
-      if (deleteResponse.statusCode === 200) {
-        await Api.delete(
-          `/subscriptions/${paymentDetails.subscription.instrument[0].value}`,
-          token
         );
       }
     }
@@ -149,39 +135,29 @@ const DynamicPayment: React.FC<DynamicPaymentProps> = ({
     paymentStatus === "REJECTED" || paymentStatus === "PENDING";
 
   return (
-    <tr className="border-b">
-      <td className="px-4 py-2">{paymentDetails.requestId}</td>
-      <td className="px-4 py-2">{paymentStatus}</td>
-      <td className="px-4 py-2">
-        {paymentDetails.request.payment?.reference ||
-          "Subscrito a: " + paymentDetails.request.subscription.reference}
-      </td>
-      <td className="px-4 py-2">
-        {paymentDetails.request.payment?.amount.total ||
-          "tu token es: " + paymentDetails.subscription.instrument[0].value}
-      </td>
-      {showRetryButton && (
-        <td className="px-4 py-2">
+    <div className="container mx-auto p-4 max-w-lg">
+      <h1 className="text-3xl font-bold mb-6 text-center">Microsite Details</h1>
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+        <div className="space-y-4">
+          {/* <DetailItem label="Name" value={microsite.name} />
+          <DetailItem label="Alias" value={microsite.slug} />
+          <DetailItem label="Logo URL" value={microsite.logo_url} />
+          <DetailItem label="Category" value={microsite.category} />
+          <DetailItem label="Microsite Type" value={microsite.microsite_type} />
+          <DetailItem label="Currency Type" value={microsite.currency_type} />
+          <DetailItem label="Payment Expiration Time (minutes)" value={microsite.payment_expiration_time?.toString()} /> */}
+        </div>
+        <div className="flex justify-end mt-6">
           <button
-            onClick={handleRetryPayment}
-            className="bg-action-button hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            onClick={() => navigate("/")}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
           >
-            Retry Payment
+            Go Back
           </button>
-        </td>
-      )}
-      {paymentDetails.request.subscription && (
-        <td className="px-4 py-2">
-          <button
-            onClick={handleCancelSubscription}
-            className="bg-action-button hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Cancel Subsciption
-          </button>
-        </td>
-      )}
-    </tr>
+        </div>
+      </div>
+    </div>
   );
 };
 
-export default DynamicPayment;
+export default PaymentOverview;
