@@ -15,7 +15,7 @@ interface PaymentStatus {
 }
 
 interface Subscription {
-instrument: [{key: string, value: string}]
+  instrument: [{ key: string; value: string }];
 }
 
 interface Amount {
@@ -51,7 +51,7 @@ interface PaymentDetails {
     payer: Payer;
     subscription: { reference: string };
   };
-  subscription: Subscription
+  subscription: Subscription;
   payment: {
     status: PaymentStatus;
     reference: string;
@@ -126,12 +126,9 @@ const DynamicPayment: React.FC<DynamicPaymentProps> = ({
 
   const handleCancelSubscription = async () => {
     if (paymentDetails) {
-      const deleteResponse = await Api.delete(
-        `/payments/${paymentId}`,
-        token
-      );
+      const deleteResponse = await Api.delete(`/payments/${paymentId}`, token);
       if (deleteResponse.statusCode === 200) {
-         await Api.delete(
+        await Api.delete(
           `/subscriptions/${paymentDetails.subscription.instrument[0].value}`,
           token
         );
@@ -161,7 +158,7 @@ const DynamicPayment: React.FC<DynamicPaymentProps> = ({
       </td>
       <td className="px-4 py-2">
         {paymentDetails.request.payment?.amount.total ||
-          paymentDetails.request.subscription.reference}
+          "tu token es: " + paymentDetails.subscription.instrument[0].value}
       </td>
       {showRetryButton && (
         <td className="px-4 py-2">
