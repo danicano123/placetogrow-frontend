@@ -84,7 +84,7 @@ const MicrositesDashboard: React.FC = () => {
         <h1 className="text-2xl font-bold mb-4">Microsites Dashboard</h1>
         <button
           onClick={() => navigate("./create-microsite")}
-          className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-blue-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
         >
           Create Microsite
         </button>
@@ -133,7 +133,7 @@ const MicrositesDashboard: React.FC = () => {
                   onClick={() =>
                     navigate(`/dashboard/microsites/${microsite.id}`)
                   }
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  className="bg-action-button hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 >
                   Edit
                 </button>
@@ -141,7 +141,7 @@ const MicrositesDashboard: React.FC = () => {
                   onClick={() =>
                     navigate(`/dashboard/microsites/form/${microsite.id}`)
                   }
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  className="bg-action-button hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 >
                   Form
                 </button>
@@ -149,7 +149,7 @@ const MicrositesDashboard: React.FC = () => {
                   onClick={() =>
                     navigate(`/dashboard/microsites/payments/${microsite.id}`)
                   }
-                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                  className="bg-action-button hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 >
                   View Payments
                 </button>
