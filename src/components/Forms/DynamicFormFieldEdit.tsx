@@ -13,7 +13,7 @@ interface FormFieldOption {
 interface DynamicFormFieldEditProps {
   id: number;
   name?: string;
-  type?: "text" | "select" | "number" | "product";
+  type?: "text" | "select" | "number" | "product" | "subscription";
   is_required?: boolean;
   options?: FormFieldOption[];
   description?: string;

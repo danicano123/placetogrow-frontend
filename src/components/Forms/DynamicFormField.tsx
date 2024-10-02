@@ -8,7 +8,7 @@ interface FormFieldOption {
 
 interface DynamicFormFieldProps {
   id: number;
-  type: "text" | "select" | "number" | "product";
+  type: "text" | "select" | "number" | "product" | "subscription" ;
   name: string;
   options?: FormFieldOption[];
   isRequired: boolean;
