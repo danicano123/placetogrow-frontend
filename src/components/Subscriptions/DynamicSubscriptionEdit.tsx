@@ -11,6 +11,7 @@ interface DynamicSubscriptionEditProps {
   description?: string;
   url_img?: string;
   value?: number;
+  term?: number;
 }
 
 const DynamicSubscriptionEdit: React.FC<DynamicSubscriptionEditProps> = ({
@@ -19,6 +20,7 @@ const DynamicSubscriptionEdit: React.FC<DynamicSubscriptionEditProps> = ({
   description,
   url_img,
   value,
+  term,
 }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const auth = useSelector((state: any) => state.auth);

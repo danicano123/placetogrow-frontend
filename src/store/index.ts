@@ -2,17 +2,28 @@ import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // almacenamiento local
 import authSlice from "./slices/authSlice";
+import subscriptionSlice from "./slices/subscriptionSlice"; 
 
-const persistConfig = {
-  key: 'root',
+
+const authPersistConfig = {
+  key: 'auth',
   storage,
 };
 
-const persistedReducer = persistReducer(persistConfig, authSlice);
+// Configuración de persistencia para subscription
+const subscriptionPersistConfig = {
+  key: 'subscription',
+  storage,
+};
+
+const authPersistedReducer = persistReducer(authPersistConfig, authSlice);
+const subscriptionPersistedReducer = persistReducer(subscriptionPersistConfig, subscriptionSlice);
+
 
 export const store = configureStore({
   reducer: {
-    auth: persistedReducer,
+    auth: authPersistedReducer,
+    subscription: subscriptionPersistedReducer,
   },
 });
 

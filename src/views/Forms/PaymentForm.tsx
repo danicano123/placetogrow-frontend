@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import DynamicFormField from "../../components/Forms/DynamicFormField";
 import DynamicProduct from "../../components/Products/DynamicProduct";
 import { Api } from "../../services/Api";
@@ -37,6 +37,7 @@ const PaymentForm: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<FormField | null>(null);
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({"Document Type": "CC"});
   const auth = useSelector((state: any) => state.auth);
+  const dispatch = useDispatch();
 
   const fetchForm = async () => {
     try {
@@ -99,6 +100,7 @@ const PaymentForm: React.FC = () => {
         micrositeId!,
         slug!,
         auth,
+        dispatch
       );
     } catch (error) {
       console.error("Error creating payment session:", error);

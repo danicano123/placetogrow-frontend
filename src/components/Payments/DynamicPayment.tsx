@@ -4,7 +4,7 @@ import {
   createPaymentSession,
 } from "../../services/PlaceToPay";
 import { Api } from "../../services/Api";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 // Interfaces
 interface PaymentStatus {
@@ -80,6 +80,7 @@ const DynamicPayment: React.FC<DynamicPaymentProps> = ({
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(
     null
   );
+  const dispatch = useDispatch();
   const auth = useSelector((state: any) => state.auth);
 
   const fetchPaymentDetails = async (id: string) => {
@@ -118,7 +119,8 @@ const DynamicPayment: React.FC<DynamicPaymentProps> = ({
           document,
           micrositeId,
           micrositeData.slug,
-          auth
+          auth,
+          dispatch
         );
       }
     }

@@ -104,7 +104,7 @@ const EditForm: React.FC = () => {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">Edit Form</h1>
-      {!form && <h2>Loading...</h2>}
+      {!form && !microsite && <h2>Loading...</h2>}
       {form && (
         <div>
           <div className="mb-4">
@@ -160,7 +160,7 @@ const EditForm: React.FC = () => {
               )}
             </div>
           )}
-          {microsite!.microsite_type === "subscription" && (
+          {microsite.microsite_type === "subscription" && (
             <div className="mb-4">
               <h2 className="text-xl font-bold mb-2">Services</h2>
               <button
