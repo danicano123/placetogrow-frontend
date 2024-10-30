@@ -1,6 +1,7 @@
 import CryptoJS from "crypto-js";
 import moment from "moment";
-import { Api } from "../services/Api";
+import { setRequestId } from "../store/slices/subscriptionSlice";
+import { Api } from "./Api";
 
 const url = import.meta.env.VITE_P2P_ENDPOINT;
 const login = import.meta.env.VITE_P2P_LOGIN;
@@ -27,7 +28,8 @@ export const createPaymentSession = async (
   document: string,
   microsite_id: string,
   slug: string,
-  auth: any
+  auth: any,
+  dispatch: any
 ): Promise<void> => {
   const micrositeData = await fetchMicrosite(microsite_id, auth.data.token);
 
@@ -89,6 +91,7 @@ export const createPaymentSession = async (
     const result = await response.json();
 
     if (result.status.status === "OK") {
+      dispatch(setRequestId(result.requestId));
       window.location.href = result.processUrl;
 
       // Llamar a la API para enviar los datos después de abrir el iframe
@@ -125,11 +128,12 @@ export const createPaymentSession = async (
 export const createSubscriptionToken = async (
   reference: string,
   description: string,
+  total: number,
   microsite_id: string,
   document_type: string,
   document: string,
-  slug: string,
-  auth: any
+  auth: any,
+  dispatch: any
 ): Promise<void> => {
   // Generar nonce aleatorio y codificar en Base64
   const nonceRaw = CryptoJS.lib.WordArray.random(16);
@@ -153,7 +157,7 @@ export const createSubscriptionToken = async (
       reference,
       description,
     },
-    
+
     payer: {
       name:
         auth.data.user.first_name + " " + (auth.data.user.second_name || ""),
@@ -165,7 +169,7 @@ export const createSubscriptionToken = async (
       documentType: document_type,
       document,
     },
-    returnUrl: `http://localhost:${port}/subscriptions/${slug}/form/${microsite_id}`,
+    returnUrl: `http://localhost:${port}/payment-details`,
     ipAddress: "127.0.0.1",
     userAgent: navigator.userAgent,
   };
@@ -182,7 +186,9 @@ export const createSubscriptionToken = async (
     const result = await response.json();
 
     if (result.status.status === "OK") {
+      dispatch(setRequestId({ requestId: result.requestId }));
       window.location.href = result.processUrl;
+
 
       // Llamar a la API para enviar los datos después de abrir el iframe
       const requestData = {
@@ -190,6 +196,7 @@ export const createSubscriptionToken = async (
         microsite_type: "subscription",
         user_id: auth.data.user.id,
         request_id: result.requestId,
+        value: total,
       };
 
       // Asumiendo que tienes un método post en tu servicio Api para enviar los datos
@@ -216,8 +223,13 @@ export const createSubscriptionToken = async (
 };
 
 // Función para obtener datos adicionales con requestId
-export const fetchAdditionalData = async (requestId: string): Promise<any> => {
+export const fetchAdditionalData = async (
+  requestId: string | undefined
+): Promise<any> => {
   // Generar nonce aleatorio y codificar en Base64
+  if (!requestId) {
+    throw new Error("requestId is required");
+  }
   const nonceRaw = CryptoJS.lib.WordArray.random(16);
   const nonce = CryptoJS.enc.Base64.stringify(nonceRaw);
 

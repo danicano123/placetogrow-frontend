@@ -1,51 +1,61 @@
-import React, { useState } from 'react';
-import Swal from 'sweetalert2';
-import { useSelector } from 'react-redux';
-import { Api } from '../../services/Api';
+import React, { useState } from "react";
+import Swal from "sweetalert2";
+import { useSelector } from "react-redux";
+import { Api } from "../../services/Api";
 
 interface CreateSubscriptionModalProps {
   formId: number;
   onClose: () => void;
 }
 
-const CreateSubscriptionModal: React.FC<CreateSubscriptionModalProps> = ({ formId, onClose }) => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [url_img, setUrlImg] = useState('');
+const CreateSubscriptionModal: React.FC<CreateSubscriptionModalProps> = ({
+  formId,
+  onClose,
+}) => {
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [url_img, setUrlImg] = useState("");
   const [value, setValue] = useState<number>(0);
+  const [term, setTerm] = useState<number>(0);
   const auth = useSelector((state: any) => state.auth);
+  console.log(formId);
 
   const handleCreate = async () => {
     try {
-      const response = await Api.post('/form-fields', {
-        name,
-        description,
-        url_img,
-        value,
-        form_id: formId,
-        type: 'subscription',
-        is_required: false,
-      }, auth.data.token);
+      const response = await Api.post(
+        "/form-fields",
+        {
+          name,
+          description,
+          url_img,
+          value,
+          form_id: formId,
+          type: "subscription",
+          is_required: false,
+          term,
+        },
+        auth.data.token
+      );
       const { data, statusCode } = response;
       if (statusCode === 201) {
         Swal.fire({
-          title: 'Success',
-          text: 'Service created successfully!',
-          icon: 'success',
+          title: "Success",
+          text: "Service created successfully!",
+          icon: "success",
         });
         onClose();
       } else {
         Swal.fire({
-          title: 'Error',
+          title: "Error",
           text: `${data.message}`,
-          icon: 'error',
+          icon: "error",
         });
       }
     } catch (error: any) {
       Swal.fire({
-        title: 'Error',
+        title: "Error",
         text: `${error.message}`,
-        icon: 'error',
+        icon: "error",
       });
     }
   };
@@ -81,12 +91,21 @@ const CreateSubscriptionModal: React.FC<CreateSubscriptionModalProps> = ({ formI
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2">Price</label>
+          <label className="block text-gray-700 mb-2">Price per term</label>
           <input
             type="number"
             className="w-full px-3 py-2 border rounded"
             value={value}
             onChange={(e) => setValue(Number(e.target.value))}
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2">Term</label>
+          <input
+            type="number"
+            className="w-full px-3 py-2 border rounded"
+            value={term}
+            onChange={(e) => setTerm(Number(e.target.value))}
           />
         </div>
         <div className="flex justify-end">

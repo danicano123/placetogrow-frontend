@@ -1,4 +1,5 @@
 import Dashboard from "../components/Dashboard/Dashboard";
+import PaymentOverviewLayout from "../components/Layout/PaymentOverviewLayout";
 import RegisterForm from "../components/Register/RegisterForm";
 import EditMicrositeForm from "../views/Forms/EditMicrositeForm";
 import PaymentForm from "../views/Forms/PaymentForm";
@@ -9,6 +10,7 @@ import EditMicrosite from "../views/Microsites/EditMicrosites";
 import MicrositesDashboard from "../views/Microsites/MicrositesDashboard";
 import MicrositeDetail from "../views/Microsites/MicrositesDetail";
 import MicrositesList from "../views/Microsites/MicrositesList";
+import PaymentOverview from "../views/Payments/PaymentOverview";
 import PaymentsDashboard from "../views/Payments/PaymentsDashboard";
 import PaymentsList from "../views/Payments/PaymentsList";
 import EditUser from "../views/Users/EditUsers";
@@ -55,6 +57,17 @@ export const RoutesSchema = [
     path: "/payments",
     element: PaymentsList,
     isProtected: true,
+  },
+  {
+    path: "/payment-details",
+    element: PaymentOverviewLayout,
+    isProtected: true,
+    children: [
+      {
+        path: ":id",
+        element: PaymentOverview,
+      },
+    ],
   },
   {
     path: "/dashboard",

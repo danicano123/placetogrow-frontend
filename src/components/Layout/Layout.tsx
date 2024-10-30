@@ -3,7 +3,7 @@ import Header from "../Header/Header";
 import { useSelector } from "react-redux";
 
 const Layout = ({ children }: { children: ReactNode }) => {
-  const auth = useSelector((state: any) => state.auth);
+  const auth = useSelector((state: any) => state.auth);  
 
   return (
     <div className="bg-layout-background min-h-screen flex flex-col">

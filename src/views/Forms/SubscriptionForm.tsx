@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import DynamicFormField from "../../components/Forms/DynamicFormField";
 
 import { Api } from "../../services/Api";
@@ -33,11 +33,12 @@ interface Form {
 }
 
 const SubscriptionForm: React.FC = () => {
-  const { micrositeId, slug } = useParams<{ micrositeId: string; slug: string }>();
+  const { micrositeId } = useParams<{ micrositeId: string; slug: string }>();
   const [form, setForm] = useState<Form | null>(null);
   const [selectedSubscription, setSelectedsubscription] = useState<FormField | null>(null);
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({"Document Type": "CC"});
   const auth = useSelector((state: any) => state.auth);
+  const dispatch = useDispatch();
 
   const fetchForm = async () => {
     try {
@@ -88,17 +89,17 @@ const SubscriptionForm: React.FC = () => {
     const reference = selectedSubscription.name;
     const description = selectedSubscription.description || "No description";
     const total = selectedSubscription.value || 0;
-console.log(auth);
 
     try {
       await createSubscriptionToken(
         reference,
         description,
+        total,
         micrositeId!,
         formValues["Document Type"].valueOf(),
         formValues["Document"].valueOf(),
-        slug!,
         auth,
+        dispatch
       );
     } catch (error) {
       console.error("Error creating payment session:", error);
